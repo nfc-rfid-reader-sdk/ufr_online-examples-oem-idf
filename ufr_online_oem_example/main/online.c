@@ -22,9 +22,6 @@ void app_main()
     /* Set both RGB LEDs to white (75, 75, 75) */
     set_led(75,75,75,75,75,75);
 
-    /* Send USER_INTERFACE_SIGNAL command */
-    reader_ui_signal(2, 2);
-
     /* Create card_id_ex_task */
 	xTaskCreate(card_id_ex_task, "card_id_ex_task", BUFFER_SIZE, NULL, 5, NULL);
 
