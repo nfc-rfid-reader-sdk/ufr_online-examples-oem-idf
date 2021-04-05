@@ -5,9 +5,11 @@
 #include "freertos/task.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include "soc/efuse_reg.h"
 #include "ESP_LOG.h"
 #include <string.h>
 #include "online.h"
+
 
 void app_main()
 {
@@ -77,6 +79,10 @@ static void card_id_ex_task(void *pvParameters)
 static void initialise_uart()
 {
 
+    uint32_t high;
+    high = REG_READ(EFUSE_BLK3_RDATA0_REG);
+    uint8_t hw_type = high >> 0;
+
 	//USB_UART
 	uart_config_t usb_uart_config = {
 		.baud_rate = 115200,
@@ -96,7 +102,15 @@ static void initialise_uart()
 		.stop_bits = UART1_STOP_BITS,
 		.flow_ctrl = UART_HW_FLOWCTRL_DISABLE};
 	uart_param_config(UART_NUM_1, &uart1_config);
-	uart_set_pin(UART_NUM_1, UART1_TXPIN, UART1_RXPIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    if(hw_type == 41)   /*WROOM2 module*/
+    {
+        uart_set_pin(UART_NUM_1, 16, 34, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+    else if(hw_type == 42)  /*WROVER32 module*/
+    {
+        uart_set_pin(UART_NUM_1, 33, 34, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    }
+	
 	ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, BUFFER_SIZE, 0, 0, NULL, 0));
 
 	vTaskDelay(50 / portTICK_PERIOD_MS);
