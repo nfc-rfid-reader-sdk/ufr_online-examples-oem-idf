@@ -1,2 +1,4 @@
-idf_component_register(SRCS "online.c"
-                    INCLUDE_DIRS "")
+set(COMPONENT_SRCDIRS ".")
+set(COMPONENT_SRCS "online.c")
+set(COMPONENT_ADD_INCLUDEDIRS ".")
+register_component()
